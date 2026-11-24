@@ -11,7 +11,10 @@ etag master ChangedAt
   create ( authorization : global );
   update;
   delete;
-  field ( readonly ) AgencyId, TravelId;
+  field ( readonly: update , mandatory : create) AgencyId, TravelId;
+  field ( readonly ) Status, ChangedAt, ChangedBy;
+  field ( mandatory ) Description, CustomerId, BeginDate, EndDate;
+
 
   action cancel_travel;
 

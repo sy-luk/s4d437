@@ -14,6 +14,26 @@ ENDCLASS.
 CLASS lhc_Z03_R_TRAVEL IMPLEMENTATION.
 
   METHOD get_instance_authorizations.
+
+    result = CORRESPONDING  #( keys ).
+
+
+    LOOP AT result ASSIGNING FIELD-SYMBOL(<result>).
+        DATA(rc) = /lrn/cl_s4d437_model=>authority_check(
+                     i_agencyid = <result>-AgencyId
+                     i_actvt    = '02'
+                   ).
+
+    IF rc <> 0.
+    <result>-%action-cancel_travel = if_abap_behv=>auth-unauthorized.
+    <result>-%update               = if_abap_behv=>auth-unauthorized.
+
+    ELSE.
+        <result>-%action-cancel_travel = if_abap_behv=>auth-allowed.
+    <result>-%update               = if_abap_behv=>auth-allowed.
+    ENDIF.
+
+    ENDLOOP.
   ENDMETHOD.
 
   METHOD get_global_authorizations.

@@ -13,6 +13,7 @@ define root view entity Z03_C_TRAVEL
         @Search.fuzzinessThreshold: 0.8
         Description,
         @Search.defaultSearchElement: true
+        @Consumption.valueHelpDefinition: [ { entity: { name: '/DMO/I_Customer_StdVH', element: 'CustomerID' } } ]
         CustomerId,
         BeginDate,
         EndDate,
