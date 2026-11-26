@@ -1,6 +1,9 @@
 projection;
 strict ( 2 );
 
+use draft;
+use side effects;
+
 define behavior for Z03_C_TRAVEL alias Travel
 use etag
 
@@ -10,5 +13,29 @@ use etag
   use delete;
 
   use action cancel_travel;
+  use action Edit;
+
+  use action Activate;
+  use action Discard;
+  use action Prepare;
+  use action Resume;
+
+
+  use action checkCustomer;
+  use action adjustDuration;
+
+  use association _TravelItem {
+
+  create; with draft; }
+
+
+
+
 
 }
+
+define behavior for Z03_C_TRAVELITEM use etag
+{ use update; use delete ;
+use association _Travel { with draft; }
+}
+

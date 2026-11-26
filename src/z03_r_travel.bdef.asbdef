@@ -1,27 +1,52 @@
 managed implementation in class zbp_03_r_travel unique;
 strict ( 2 );
+with draft;
 
 define behavior for Z03_R_TRAVEL alias Travel
-persistent table z03_travel
+persistent table z03_travel                         ##UNMAPPED_FIELD
+draft table z03_travel_d
 lock master
+total etag ChangedAt
 authorization master ( instance )
-etag master ChangedAt
-
+etag master LocChangedAt
 early numbering
+with additional save
+
 
 {
   create ( authorization : global );
-  update;
+  update ( features : instance );
   delete;
 //  field ( readonly: update , mandatory : create) AgencyId, TravelId;
 //  field ( readonly ) Status, ChangedAt, ChangedBy;
-  field ( readonly ) AgencyId,
+  field ( readonly ) AgencyId, Duration,
   TravelId;
+  event TravelCreated  parameter Z03_A_Event;
+
 
   field ( mandatory ) Description, CustomerId, BeginDate, EndDate;
 
+  association _TravelItem {create; with draft;}
 
-  action cancel_travel;
+
+  draft action Edit;
+  draft action Activate optimized;
+  draft action Discard;
+  draft action Resume;
+  draft determine action Prepare
+    { validation validateDescription;
+      validation validateCustomer;
+
+    }
+
+  action ( features : instance ) cancel_travel;
+
+  determine action checkCustomer
+    {
+    validation validateCustomer;
+    }
+
+
 
   validation validateDescription on save {
     create;
@@ -35,6 +60,11 @@ early numbering
    determination determineStatus on modify
    { create; }
 
+   determination determineDuration on save{ field BeginDate, EndDate;}
+
+   determine action adjustDuration{ determination determineDuration;}
+
+    side effects{ determine action adjustDuration executed on field BeginDate, field EndDate affects field Duration, messages;}
   mapping for z03_travel corresponding
     {
       AgencyID   = agency_id;
@@ -44,5 +74,60 @@ early numbering
       EndDate    = end_date;
       ChangedAt  = changed_at;
       ChangedBy  = changed_by;
+      LocChangedAt = loc_changed_at;
+
     }
+
+
+
+}
+
+    define behavior for Z03_TRAVELITEM alias TravelItem
+    with unmanaged save
+     draft table z03_tritem_d
+    lock dependent by _Travel
+    etag master LocChangedAt
+    authorization dependent
+
+    {
+    update;
+    delete;
+
+    field ( readonly, numbering : managed ) ItemUuid;
+    field ( readonly ) TravelId, AgencyId;
+
+    association _Travel { with draft; }
+
+    mapping for z03_tritem corresponding
+      {
+        ItemUuid           = item_uuid;
+        AgencyId           = agency_id;
+        TravelId           = travel_id;
+        CarrierId          = carrier_id;
+        ConnectionId       = connection_id;
+        FlightDate         = flight_date;
+        BookingId          = booking_id;
+        PassengerFirstName = passenger_first_name;
+        PassengerLastName  = passenger_last_name;
+        ChangedAt          = changed_at;
+        ChangedBy          = changed_by;
+        LocChangedAt       = loc_changed_at;
+      }
+
+
+   mapping for /lrn/437_s_tritem
+    control /lrn/437_s_tritemx corresponding {
+
+      ItemUuid = item_uuid;
+      AgencyId = agency_id;
+      TravelId = travel_id;
+      CarrierId = carrier_id;
+      ConnectionId = connection_id;
+      FlightDate = flight_date;
+      BookingId = booking_id;
+      PassengerFirstName = passenger_first_name;
+      PassengerLastName = passenger_last_name;
+      ChangedAt = changed_at;
+      ChangedBy = changed_by;
+      LocChangedAt = loc_changed_at; }
 }
