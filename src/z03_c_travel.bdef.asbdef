@@ -1,12 +1,13 @@
 projection;
 strict ( 2 );
+extensible;
 
 use draft;
 use side effects;
 
 define behavior for Z03_C_TRAVEL alias Travel
 use etag
-
+extensible
 {
   use create;
   use update;
@@ -38,4 +39,3 @@ define behavior for Z03_C_TRAVELITEM use etag
 { use update; use delete ;
 use association _Travel { with draft; }
 }
-

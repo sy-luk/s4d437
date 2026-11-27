@@ -15,7 +15,7 @@ CLASS lsc_z03_r_travel IMPLEMENTATION.
 
   METHOD save_modified.
   DATA(model) = NEW /lrn/cl_s4d437_tritem(
-                          i_table_name = 'Z00_TRITEM' ).
+                          i_table_name = 'Z03_TRITEM' ).
 
   LOOP AT delete-travelitem ASSIGNING FIELD-SYMBOL(<item_d>).
   model->delete_item( i_uuid = <item_d>-itemuuid ).
@@ -53,11 +53,11 @@ CLASS lsc_z03_r_travel IMPLEMENTATION.
 *    ENDIF.
 
 *    IF update-travel IS NOT INITIAL.
-*      RAISE ENTITY EVENT Z00_R_Travel~TravelCreated
+*      RAISE ENTITY EVENT Z03_R_Travel~TravelCreated
 *          FROM VALUE #( FOR <new_travel> IN update-travel
 *                            ( AgencyId = <new_travel>-AgencyId
 *                              TravelId = <new_travel>-TravelId
-*                              origin = 'Update 00' )
+*                              origin = 'Update 03' )
 *                          ).
 *    ENDIF.
 
@@ -77,7 +77,7 @@ CLASS lsc_z03_r_travel IMPLEMENTATION.
 *      RAISE ENTITY EVENT Z03_R_Travel~TravelCreated
 *          FROM VALUE #( ( AgencyId = lcl_event_buffer=>travel-AgencyId
 *                          TravelId = lcl_event_buffer=>travel-TravelId
-*                          origin = 'Cancel Travel 00' )
+*                          origin = 'Cancel Travel 03' )
 *                       ).
 *    ENDIF.
 
